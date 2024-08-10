@@ -1,0 +1,18 @@
+#root {
+  width: 100%;
+  padding-top: 0rem;
+  text-align: left;
+  height: 100vh;  
+}
+
+.block{
+  padding-left: 25px;
+  padding-right: 25px
+}
+
+.clickable:hover{
+  cursor: pointer;
+  color: pink;
+
+}
+

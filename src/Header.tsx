@@ -25,13 +25,6 @@ function MyCommandBar() {
       href: "#/new",
       // onClick: () => nav(`/new`),
     },
-    {
-      key: "aidan",
-      text: ":O",
-      iconProps: { iconName: "Emoji2" },
-      href: "#/yay",
-      // onClick: () => nav(`/yay`),
-    },
   ];
 
   return <CommandBar items={items} />;

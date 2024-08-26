@@ -1,11 +1,12 @@
 import "../App.css";
-import { Checkbox, IStackStyles, IStackTokens, Stack } from "@fluentui/react";
+import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import { myTheme } from "../assets/theme";
-import { task, taskUI } from "../assets/task";
-import { Router, useNavigate } from "react-router-dom";
+import { task } from "../assets/task";
 import axios from "axios";
+import { Task } from "./task_comp";
 
+//Styling things for stack
 const containerStack: IStackTokens = { childrenGap: 10, padding: 7 };
 const stackStyles: IStackStyles = {
   root: {
@@ -13,83 +14,76 @@ const stackStyles: IStackStyles = {
   },
 };
 
-interface TaskProps {
-  todoName: string;
-  todoID;
-  index: number;
-  isChecked: boolean;
-  sendToParent: (data: boolean, deleteID) => void;
-}
-
-//Represents one singular task
-const Task = (props: TaskProps) => {
-  const [isChecked, setChecked] = useState(props.isChecked);
-  const nav = useNavigate();
-
-  const onChange = (ev, checked) => {
-    setChecked(checked);
-    props.sendToParent(checked, props.todoID);
-
-    console.log("checked: " + checked);
-  };
-
-  const reroute = async () => {
-    const response = await axios.get(
-      "http://localhost:3000/api/find/" + props.todoID
-    );
-
-    const re = response.data;
-
-    console.log(re);
-
-    nav("/details/" + 1, {
-      state: { name: re.name, dueDate: re.dueDate, notes: re.notes },
-    });
-  };
-
-  return (
-    <Stack horizontal>
-      <Checkbox checked={isChecked} onChange={onChange} />
-      <span className="clickable" onClick={reroute}>
-        {props.todoName}
-      </span>
-    </Stack>
-  );
-};
-
+//Props for Main component
 interface MainProps {
   isChecked: boolean;
   deleteID;
 }
 
+//Main: functional component
+//State: todo (an array of tasks)
 const Main: React.FC<MainProps> = ({}) => {
-  const [todo, setTodo] = useState([]);
-  const [del, setDelete] = useState<boolean>();
-  const [deleteID, setDeleteID] = useState();
+  const [todo, setTodo] = useState<task[]>([]);
 
+  //Updates Main's todo list to keep track of which items are checked
   const getTaskChecked = (checked: boolean, deleteID) => {
-    setDelete(checked);
-    setDeleteID(deleteID);
+    let newVal: task[] = [];
+    todo.forEach((item) => {
+      newVal.push({
+        ...item,
+        isChecked: item._id == deleteID ? checked : item.isChecked,
+      });
+    });
+    setTodo(newVal);
     console.log("Is it checked? " + checked);
     console.log("DeleteID is: " + deleteID);
   };
 
+  //Retrieves all tasks from API and sets the todo state
   const getTasks = async () => {
     const response = await axios.get("http://localhost:3000/api/loadAll");
+    response.data.forEach((element) => {
+      element.isChecked = false;
+    });
     setTodo(response.data);
+    console.log(response.data);
   };
 
+  //Calls getTasks() upon starting application
   useEffect(() => {
-    //console.log("running get tasks");
     getTasks();
   }, []);
 
+  //Checks todo array and deletes all items that are marked as checked
+  //Calls API
+  //!HAVE TO EDIT: for deleting multiple items
   const deleteTask = async () => {
+    const deletedTasks = todo.filter((item) => item.isChecked);
+
+    //modify this for multiple deletions with for loop, not for each
+    //await doesnt work with for each
     const response = await axios.delete(
-      "http://localhost:3000/api/delete/" + deleteID
+      "http://localhost:3000/api/delete/" + deletedTasks[0]._id //deleteID
     );
-    await getTasks();
-    setDelete(false);
+    //Note: after deletion u have to update the isChecked WITHIN the array to trigger re-rendering
+    let newVal: task[] = [];
+
+    //We reset todo after deletion with a list of tasks that were not deleted and reset all their checked values
+    todo.forEach((item) => {
+      if (item._id != deletedTasks[0]._id)
+        newVal.push({
+          ...item,
+          isChecked: false,
+        });
+    });
+    // Basically after deleting, we set the state to be everything that wasn't deleted
+    setTodo(newVal);
+  };
+
+  //Checks to see if any item is selected
+  const _hasItemSelected = () => {
+    const result = todo.filter((item) => item.isChecked);
+    return result.length > 0;
   };
 
   return (
@@ -107,12 +101,14 @@ const Main: React.FC<MainProps> = ({}) => {
             todoName={task.name}
             todoID={task._id}
             index={index}
-            isChecked={false}
+            isChecked={task.isChecked}
             sendToParent={getTaskChecked}
           />
         ))}
-        {/* This is how to do if/else */}
-        {del && <button onClick={deleteTask}> Delete Task?</button>}
+        {/* aka if/else */}
+        {_hasItemSelected() && (
+          <button onClick={deleteTask}> Delete Task?</button>
+        )}
       </Stack>
     </div>
   );

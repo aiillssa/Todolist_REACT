@@ -28,6 +28,7 @@ export const NewTask = ({}) => {
       name: name,
       dueDate: duedate,
       notes: notes,
+      isChecked: false,
     });
     console.log("form submitted");
 

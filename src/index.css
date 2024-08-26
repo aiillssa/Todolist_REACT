@@ -1,3 +1,4 @@
+/* Some random styling things */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -65,4 +66,26 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#root {
+  width: 100%;
+  padding-top: 0rem;
+  text-align: left;
+  height: 100vh;  
+}
+
+.block{
+  padding-left: 25px;
+  padding-right: 25px
+}
+
+.clickable:hover{
+  cursor: pointer;
+  color: pink;
+
+}
+
+.date{
+  padding-left: 50px;
 }

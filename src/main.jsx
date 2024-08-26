@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
 
+//Specify HTML root
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />

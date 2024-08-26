@@ -1,4 +1,4 @@
-import "../App.css";
+import "../index.css";
 import { IStackStyles, IStackTokens, Stack } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import { myTheme } from "../assets/theme";
@@ -57,6 +57,7 @@ const Main: React.FC<MainProps> = ({}) => {
   //Checks todo array and deletes all items that are marked as checked
   //Calls API
   //!HAVE TO EDIT: for deleting multiple items
+  //* Should also add a completed tasks feature
   const deleteTask = async () => {
     const deletedTasks = todo.filter((item) => item.isChecked);
 
@@ -101,6 +102,7 @@ const Main: React.FC<MainProps> = ({}) => {
             todoName={task.name}
             todoID={task._id}
             index={index}
+            dueDate={task.dueDate}
             isChecked={task.isChecked}
             sendToParent={getTaskChecked}
           />

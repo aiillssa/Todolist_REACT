@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 interface TaskProps {
   todoName: string;
   todoID;
+  dueDate;
   index: number;
   isChecked: boolean;
   //Method to send checked data back to main component
@@ -40,8 +41,20 @@ export const Task = (props: TaskProps) => {
     console.log(re);
 
     nav("/details/" + 1, {
-      state: { name: re.name, dueDate: re.dueDate, notes: re.notes },
+      state: {
+        id: props.todoID,
+        name: re.name,
+        dueDate: re.dueDate,
+        notes: re.notes,
+      },
     });
+  };
+
+  const hasDueDate = () => {
+    if (props.dueDate === undefined || props.dueDate.length === 0) {
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -50,7 +63,8 @@ export const Task = (props: TaskProps) => {
       <span className="clickable" onClick={reroute}>
         {props.todoName}
       </span>
-      <div>{`state: ${isChecked}; props: ${props.isChecked}`}</div>
+
+      {hasDueDate() && <div>&nbsp;Due Date: {props.dueDate}</div>}
     </Stack>
   );
 };

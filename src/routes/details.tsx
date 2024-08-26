@@ -1,6 +1,8 @@
+import { TextField } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function dateExists(date) {
   if (date !== undefined) {
@@ -25,10 +27,11 @@ function notesExists(note: string) {
 }
 
 export function Details() {
-  //use effect and call the api route :O
+  //use effect and call the api route (?)
   const location = useLocation();
+  const nav = useNavigate();
 
-  //{state} means ur retrieving the STATE FIELD IN LOCATION U DINGUS
+  //{state} means ur retrieving the STATE FIELD IN LOCATION
   const { state } = location;
 
   const [edit, setEdit] = useState<boolean>(false);
@@ -38,12 +41,33 @@ export function Details() {
 
   console.log(state);
 
-  const handleClick = () => {
+  const handleEditClick = () => {
     setEdit(true);
-    return <div> hello</div>;
+    setNewName(state.name);
+    setNewDueDate(state.dueDate);
+    setNewNotes(state.notes);
   };
 
-  const editForm = () => {};
+  const handleSaveClick = async () => {
+    const response = await axios.post(
+      "http://localhost:3000/api/update/" + state.id,
+      {
+        name: newName,
+        dueDate: newDueDate,
+        notes: newNotes,
+      }
+    );
+
+    setEdit(false);
+    nav("/");
+  };
+
+  const handleNotesChange = (
+    event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    newValue?: string
+  ) => {
+    setNewNotes(newValue || "");
+  };
 
   if (edit === true) {
     return (
@@ -55,31 +79,37 @@ export function Details() {
           <input
             name="query"
             id="name"
-            value={state.name}
+            value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
           <h2>Due Date of Task:</h2>
           <input
             type="date"
             id="name"
-            value={state.dueDate}
+            value={newDueDate}
             onChange={(e) => setNewDueDate(e.target.value)}
           />
-
-          {dateExists(state.dueDate)}
-          {notesExists(state.notes)}
-          <button onClick={handleClick}> Edit Task </button>
+          <h2> Notes for this Task:</h2>
+          <TextField
+            multiline
+            resizable={false}
+            id="notes"
+            value={newNotes}
+            onChange={handleNotesChange}
+          ></TextField>
+          <button onClick={handleSaveClick}> Save Task </button>
         </label>
       </div>
     );
   } else {
+    console.log("newName state: ", newName);
     return (
       <div className="block">
         <h1>DETAILS</h1>
         <h2>{state.name}</h2>
         {dateExists(state.dueDate)}
         {notesExists(state.notes)}
-        <button onClick={handleClick}> Edit Task </button>
+        <button onClick={handleEditClick}> Edit Task </button>
       </div>
     );
   }

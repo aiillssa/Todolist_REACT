@@ -1,4 +1,4 @@
-import "./App.css";
+import "./index.css";
 import MyCommandBar from "./Header";
 import { ThemeProvider } from "@fluentui/react";
 import React from "react";

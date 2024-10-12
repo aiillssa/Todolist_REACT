@@ -50,7 +50,7 @@ export function Details() {
 
   const handleSaveClick = async () => {
     const response = await axios.post(
-      "http://localhost:3000/api/update/" + state.id,
+      "https://todolist-react-srv.onrender.com/api/update/" + state.id,
       {
         name: newName,
         dueDate: newDueDate,

@@ -24,12 +24,15 @@ export const NewTask = ({}) => {
 
     console.log(newTask);
 
-    const response = await axios.post("http://localhost:3000/api/create", {
-      name: name,
-      dueDate: duedate,
-      notes: notes,
-      isChecked: false,
-    });
+    const response = await axios.post(
+      "https://todolist-react-srv.onrender.com/api/create",
+      {
+        name: name,
+        dueDate: duedate,
+        notes: notes,
+        isChecked: false,
+      }
+    );
     console.log("form submitted");
 
     nav("/");

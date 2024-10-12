@@ -20,7 +20,12 @@ function MyCommandBar() {
       text: "New",
       iconProps: { iconName: "Add" },
       href: "#/new",
-    },
+    },{
+      key: "profile",
+      text: "Profile",
+      iconProps: {iconName: "Heart"},
+      href: "#/profile"
+    }
   ];
 
   return <CommandBar items={items} />;

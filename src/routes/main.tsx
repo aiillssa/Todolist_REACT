@@ -5,12 +5,15 @@ import { myTheme } from "../assets/theme";
 import { task } from "../assets/task";
 import axios from "axios";
 import { Task } from "./task_comp";
+import { useIsAuthenticated } from "@azure/msal-react";
+import { SignInButton } from "../assets/SignInButton";
+import { SignOutButton } from "../assets/SignOutButton";
 
 //Styling things for stack
 const containerStack: IStackTokens = { childrenGap: 10, padding: 7 };
 const stackStyles: IStackStyles = {
   root: {
-    background: myTheme.palette.themeTertiary,
+    background: "#FFB6C1",
   },
 };
 
@@ -23,7 +26,9 @@ interface MainProps {
 //Main: functional component
 //State: todo (an array of tasks)
 const Main: React.FC<MainProps> = ({}) => {
+  const isAuthenticated = useIsAuthenticated();
   const [todo, setTodo] = useState<task[]>([]);
+  const[genrAgenda, setGenrAgenda] = useState("");
 
   //Updates Main's todo list to keep track of which items are checked
   const getTaskChecked = (checked: boolean, deleteID) => {
@@ -41,7 +46,9 @@ const Main: React.FC<MainProps> = ({}) => {
 
   //Retrieves all tasks from API and sets the todo state
   const getTasks = async () => {
-    const response = await axios.get("http://localhost:3000/api/loadAll");
+    const response = await axios.get(
+      "https://todolist-react-srv.onrender.com/api/loadAll"
+    );
     response.data.forEach((element) => {
       element.isChecked = false;
     });
@@ -60,11 +67,12 @@ const Main: React.FC<MainProps> = ({}) => {
   //* Should also add a completed tasks feature
   const deleteTask = async () => {
     const deletedTasks = todo.filter((item) => item.isChecked);
-
+ 
     //modify this for multiple deletions with for loop, not for each
     //await doesnt work with for each
     const response = await axios.delete(
-      "http://localhost:3000/api/delete/" + deletedTasks[0]._id //deleteID
+      "https://todolist-react-srv.onrender.com/api/delete/" +
+        deletedTasks[0]._id //deleteID
     );
     //Note: after deletion u have to update the isChecked WITHIN the array to trigger re-rendering
     let newVal: task[] = [];
@@ -80,6 +88,15 @@ const Main: React.FC<MainProps> = ({}) => {
     // Basically after deleting, we set the state to be everything that wasn't deleted
     setTodo(newVal);
   };
+
+  //Calls our chatgpt endpoint to generate a daily agenda based on tasks
+  //Could eventually  modify it to generate daily agaenda based on SELECT tasks
+  const genAgenda = async() => {
+    const response = await axios.get("http://localhost:3000/chatgpt");
+    console.log(response.data);
+    setGenrAgenda(response.data.content);
+
+  }
 
   //Checks to see if any item is selected
   const _hasItemSelected = () => {
@@ -111,6 +128,14 @@ const Main: React.FC<MainProps> = ({}) => {
         {_hasItemSelected() && (
           <button onClick={deleteTask}> Delete Task?</button>
         )}
+
+        <button onClick = {genAgenda}> Generate Daily Agenda</button>
+        {genrAgenda}
+
+        <div >
+        {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+        </div>
+        
       </Stack>
     </div>
   );

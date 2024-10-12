@@ -10,11 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@azure/msal-browser": "^3.26.1",
+    "@azure/msal-react": "^2.1.1",
     "@fluentui/react": "^8.119.2",
     "axios": "^1.7.2",
+    "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
     "mongodb": "^6.8.0",
+    "openai": "^4.62.0",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.5",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.25.1"
   },

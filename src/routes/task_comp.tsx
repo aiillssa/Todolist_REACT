@@ -33,7 +33,7 @@ export const Task = (props: TaskProps) => {
 
   const reroute = async () => {
     const response = await axios.get(
-      "http://localhost:3000/api/find/" + props.todoID
+      "https://todolist-react-srv.onrender.com/api/find/" + props.todoID
     );
 
     const re = response.data;
@@ -64,7 +64,9 @@ export const Task = (props: TaskProps) => {
         {props.todoName}
       </span>
 
-      {hasDueDate() && <div>&nbsp;Due Date: {props.dueDate}</div>}
+      {hasDueDate() && (
+        <div className="due-date">&nbsp;Due Date: {props.dueDate}</div>
+      )}
     </Stack>
   );
 };
